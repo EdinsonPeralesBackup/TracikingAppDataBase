@@ -34,7 +34,7 @@ CREATE TABLE [USER]
 	CONSTRAINT pk_user
 		PRIMARY KEY (Id),
 	CONSTRAINT fk_user_role
-		FOREIGN KEY (Id)
+		FOREIGN KEY (IdRole)
 		REFERENCES [ROLE](Id)
 )
 
@@ -44,13 +44,12 @@ CREATE TABLE [USER_PROFILE]
 	[Name] VARCHAR(100),
 	LastName VARCHAR(300),
 	Birthday DATE,
-	Phone VARCHAR(10),
 	[State] BIT,
 	IdUser INT,
 	CONSTRAINT pk_user_profile
 		PRIMARY KEY (Id),
 	CONSTRAINT fk_user_profilexuser
-		FOREIGN KEY (Id)
+		FOREIGN KEY (IdUser)
 		REFERENCES [User](Id)
 )
 
