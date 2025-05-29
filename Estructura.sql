@@ -31,6 +31,8 @@ CREATE TABLE [USER]
 	UpdateAt DATETIME,
 	DeleteBy INT,
 	DeleteAt DATETIME,
+	[State] BIT,
+	Token VARCHAR(MAX),
 	CONSTRAINT pk_user
 		PRIMARY KEY (Id),
 	CONSTRAINT fk_user_role
@@ -139,4 +141,17 @@ CREATE TABLE ALERTXTRUSTED_CONTACTS
 	CONSTRAINT fk_alertxtrusted_contactsXTrusted_contacts
 		FOREIGN KEY (IdTrusted_Contacts)
 		REFERENCES TRUSTED_CONTACT(Id)
+)
+
+CREATE TABLE CODE_RESET
+(
+	Id INT IDENTITY(1,1),
+	Code VARCHAR(10),
+	[State] BIT,
+	IdUser INT,
+	CONSTRAINT pk_code_reset
+		PRIMARY KEY (Id),
+	CONSTRAINT fk_code_resetXUser
+		FOREIGN KEY (IdUser)
+		REFERENCES [USER](Id)
 )

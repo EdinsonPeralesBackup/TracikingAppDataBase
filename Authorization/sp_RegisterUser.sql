@@ -32,8 +32,8 @@ BEGIN
 			ELSE
 				BEGIN
 					DECLARE @idNewUser INT = 0
-					INSERT INTO [USER](Phone, Password, IdRole) 
-						VALUES(@pphonenumber, @ppassword, 2)
+					INSERT INTO [USER](Phone, Password, IdRole, State) 
+						VALUES(@pphonenumber, @ppassword, 2, 1)
 
 					SET @idNewUser = SCOPE_IDENTITY();
 					
