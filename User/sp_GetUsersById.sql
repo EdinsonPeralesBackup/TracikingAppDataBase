@@ -1,0 +1,26 @@
+USE TrackingBD;
+GO
+IF EXISTS (SELECT * FROM sys.procedures WHERE name = 'sp_GetUsersById') 
+	BEGIN
+		DROP PROCEDURE sp_GetUsersById;
+	END
+GO
+
+CREATE PROCEDURE sp_GetUsersById
+(
+	@pId INT
+)
+AS
+BEGIN
+	SELECT 
+		USR.Id AS [ID],
+		USR_PROF.[Name] AS [NAME],
+		USR_PROF.LastName AS [LASTNAME],
+		USR_PROF.Birthday AS [BIRTHDAY],
+		USR.Phone AS [PHONE],
+		USR.[State] AS [STATE],
+		USR.CreateAt AS [CREATEDAT]
+	FROM [USER] USR
+	INNER JOIN USER_PROFILE USR_PROF ON USR_PROF.IdUser = USR.Id
+	WHERE USR.Id = @pId
+END

@@ -48,6 +48,7 @@ CREATE TABLE [USER_PROFILE]
 	Birthday DATE,
 	[State] BIT,
 	IdUser INT,
+	Avatar VARCHAR(MAX),
 	CONSTRAINT pk_user_profile
 		PRIMARY KEY (Id),
 	CONSTRAINT fk_user_profilexuser
