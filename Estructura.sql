@@ -1,4 +1,6 @@
---DROP TABLE TrackingBD
+--USE master;
+
+--DROP DATABASE TrackingBD
 
 --CREATE DATABASE TrackingBD;
 
@@ -60,11 +62,23 @@ CREATE TABLE [ROUTE]
 (
 	Id INT IDENTITY(1,1),
 	Tracking_id VARCHAR(10),
+
+	Distance_text VARCHAR(250),
+	Distance DECIMAL(10, 4),
+
+	Duration_text VARCHAR(250),
+	Duration DECIMAL(10, 4),
+
+	Origin_address VARCHAR(MAX),
 	Origin_latitud DECIMAL(10,4),
 	Origin_longitude DECIMAL(10,4),
+
+	Destination_address VARCHAR(MAX),
 	Destination_latitud DECIMAL(10,4),
 	Destination_longitude DECIMAL(10,4),
-	Checkpoint_interval INT,
+
+	[Timestamp] DATETIME,
+
 	IdUser INT,
 	IdRoute_calibrated INT,
 	CONSTRAINT pk_route
@@ -80,8 +94,21 @@ CREATE TABLE [ROUTE]
 CREATE TABLE POINT
 (
 	Id INT IDENTITY(1,1),
-	Latitud DECIMAL(10,4),
-	Longitude DECIMAL(10,4),
+
+	Distance_text VARCHAR(250),
+	Distance DECIMAL(10, 4),
+
+	Duration_text VARCHAR(250),
+	Duration DECIMAL(10, 4),
+	
+	Origin_latitud DECIMAL(10,4),
+	Origin_longitude DECIMAL(10,4),
+
+	End_latitud DECIMAL(10,4),
+	End_longitude DECIMAL(10,4),
+
+	Html_instructions VARCHAR(MAX),
+
 	[Timestamp] DATETIME,
 	IsValid CHAR(1),
 	IdRoute INT,
