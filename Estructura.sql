@@ -109,6 +109,8 @@ CREATE TABLE POINT
 
 	Html_instructions VARCHAR(MAX),
 
+	Deviation DECIMAL(10, 4),
+
 	[Timestamp] DATETIME,
 	IsValid CHAR(1),
 	IdRoute INT,

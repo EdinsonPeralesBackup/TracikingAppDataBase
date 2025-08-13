@@ -46,6 +46,37 @@ BEGIN
 
 			UPDATE [ROUTE] SET Tracking_id = @numberTracking WHERE Id = @idNewRoute
 
+			INSERT INTO dbo.POINT (
+				Distance_text,
+				Distance,
+				Duration_text,
+				Duration,
+				Origin_latitud,
+				Origin_longitude,
+				End_latitud,
+				End_longitude,
+				Html_instructions,
+				[Timestamp],
+				IsValid,
+				IdRoute,
+				Deviation
+			)
+			SELECT
+				Step.value('(Distance/Text)[1]', 'VARCHAR(250)'),
+				Step.value('(Distance/Value)[1]', 'DECIMAL(10,4)'),
+				Step.value('(Duration/Text)[1]', 'VARCHAR(250)'),
+				Step.value('(Duration/Value)[1]', 'DECIMAL(10,4)'),
+				Step.value('(Start_location/Lat)[1]', 'DECIMAL(10,4)'),
+				Step.value('(Start_location/Lng)[1]', 'DECIMAL(10,4)'),
+				Step.value('(End_location/Lat)[1]', 'DECIMAL(10,4)'),
+				Step.value('(End_location/Lng)[1]', 'DECIMAL(10,4)'),
+				Step.value('(Html_instructions)[1]', 'VARCHAR(MAX)'),
+				@ptimestamp,
+				'D',
+				@idNewRoute,
+				0
+			FROM @pXMLPoint.nodes('/ArrayOfStep/Step') AS XTbl(Step);
+
 			SET @message = 'Tracking started'
 
 		COMMIT TRANSACTION;
