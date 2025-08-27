@@ -1,4 +1,4 @@
-CREATE FUNCTION dbo.fn_EvaluarPuntoEnLinea (
+CREATE OR ALTER FUNCTION dbo.fn_EvaluarPuntoEnLinea (
     @LatA FLOAT,
     @LonA FLOAT,
     @LatB FLOAT,

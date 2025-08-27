@@ -34,12 +34,12 @@ BEGIN
 				(Distance_text, Distance, Duration_text, Duration, 
 					Origin_address, Origin_latitud, Origin_longitude,
 					Destination_address, Destination_latitud, Destination_longitude,
-					IdUser, [Timestamp])
+					IdUser, [Timestamp], [State])
 			VALUES
 				(@pdistance_text, @pdistance, @pduration_text, @pduration,
 					@porigin_address, @porigin_latitud, @porigin_longitude,
 					@pdestination_address, @pdestination_latitud, @pdestination_longitude,
-					@pidUser, @ptimestamp)
+					@pidUser, @ptimestamp, 'S')
 
 			SET @idNewRoute = SCOPE_IDENTITY();
 			SET @numberTracking = CONCAT('track-', RIGHT(CONCAT('000', @idNewRoute), 3))
@@ -72,7 +72,7 @@ BEGIN
 				Step.value('(End_location/Lng)[1]', 'DECIMAL(10,4)'),
 				Step.value('(Html_instructions)[1]', 'VARCHAR(MAX)'),
 				@ptimestamp,
-				'D',
+				'D', --DEFAULT
 				@idNewRoute,
 				0
 			FROM @pXMLPoint.nodes('/ArrayOfStep/Step') AS XTbl(Step);

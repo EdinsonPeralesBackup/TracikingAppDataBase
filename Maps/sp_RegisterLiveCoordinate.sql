@@ -70,7 +70,7 @@ BEGIN
 				@platitud,
 				@plongitute,
 				@ptimestamp,
-				'S',
+				'L', --LIVE 
 				@pidTracking,
 				@calculusDeviatioFinal
 			)

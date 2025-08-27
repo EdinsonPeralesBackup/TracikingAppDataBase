@@ -81,6 +81,7 @@ CREATE TABLE [ROUTE]
 
 	IdUser INT,
 	IdRoute_calibrated INT,
+	[State] CHAR(1),
 	CONSTRAINT pk_route
 		PRIMARY KEY (Id),
 	CONSTRAINT fk_route_user
