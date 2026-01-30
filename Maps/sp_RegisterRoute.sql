@@ -21,30 +21,33 @@ CREATE PROCEDURE sp_RegisterRoute
 	@pidUser INT,
 	@ptimestamp DATETIME,
 	@pXMLPoint XML,
-	@numberTracking VARCHAR(100) OUTPUT,
+	@pRouteCalibrated INT,
+	@idRoute INT OUTPUT,
 	@message VARCHAR(250) OUTPUT
 )
 AS
 BEGIN
-	DECLARE 
-		@idNewRoute INT = 0
+	DECLARE @numberTracking VARCHAR(10)
 	BEGIN TRY
 		BEGIN TRANSACTION
 			INSERT INTO [ROUTE]
 				(Distance_text, Distance, Duration_text, Duration, 
 					Origin_address, Origin_latitud, Origin_longitude,
 					Destination_address, Destination_latitud, Destination_longitude,
-					IdUser, [Timestamp], [State])
+					IdUser, [Timestamp], [State], IdRoute_calibrated)
 			VALUES
 				(@pdistance_text, @pdistance, @pduration_text, @pduration,
 					@porigin_address, @porigin_latitud, @porigin_longitude,
 					@pdestination_address, @pdestination_latitud, @pdestination_longitude,
-					@pidUser, @ptimestamp, 'S')
+					@pidUser, @ptimestamp, 'S', (CASE @pRouteCalibrated
+						WHEN 0 THEN NULL
+						ELSE @pRouteCalibrated END))
 
-			SET @idNewRoute = SCOPE_IDENTITY();
-			SET @numberTracking = CONCAT('track-', RIGHT(CONCAT('000', @idNewRoute), 3))
+			SET @idRoute = SCOPE_IDENTITY();
 
-			UPDATE [ROUTE] SET Tracking_id = @numberTracking WHERE Id = @idNewRoute
+			SET @numberTracking = CONCAT('track-', RIGHT(CONCAT('000', @idRoute), 3))
+
+			UPDATE [ROUTE] SET Tracking_id = @numberTracking WHERE Id = @idRoute
 
 			INSERT INTO dbo.POINT (
 				Distance_text,
@@ -73,7 +76,7 @@ BEGIN
 				Step.value('(Html_instructions)[1]', 'VARCHAR(MAX)'),
 				@ptimestamp,
 				'D', --DEFAULT
-				@idNewRoute,
+				@idRoute,
 				0
 			FROM @pXMLPoint.nodes('/ArrayOfStep/Step') AS XTbl(Step);
 

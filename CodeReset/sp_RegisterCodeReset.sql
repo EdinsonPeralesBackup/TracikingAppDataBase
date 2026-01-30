@@ -9,20 +9,25 @@ GO
 CREATE PROCEDURE sp_RegisterCodeReset
 (
 	@pcode VARCHAR(6),
-	@pidUser INT,
+	@pphone VARCHAR(6),
 	@message VARCHAR(500) OUTPUT
 )
 AS
 BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION
+			
+			DECLARE @IdUsuario INT;
+
+			SELECT @IdUsuario = Id FROM [USER] WHERE Phone = @pphone
+
 			INSERT INTO CODE_RESET(Code, State, IdUser) 
-				VALUES(@pcode, 1, @pidUser)
-			SET @message = 'Code verified successfully.';
+				VALUES(@pcode, 1, @IdUsuario)
+			SET @message = 'Code registed successfully.';
 		COMMIT TRANSACTION;
 	END TRY
 	BEGIN CATCH
-		SET @message = '';
+		SET @message = 'EX';
 		ROLLBACK TRANSACTION;
 	END CATCH
 END

@@ -8,7 +8,7 @@ GO
 
 CREATE PROCEDURE sp_RegisterLiveCoordinate
 (
-	@pidTracking VARCHAR(100),
+	@pidTracking INT,
 	@platitud DECIMAL(10, 4),
 	@plongitute DECIMAL(10, 4),
 	@ptimestamp DATETIME,
