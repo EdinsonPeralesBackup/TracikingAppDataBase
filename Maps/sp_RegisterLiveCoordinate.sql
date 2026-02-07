@@ -48,7 +48,10 @@ BEGIN
 											@routeEndLatitud, @routeEndLongitude,
 											@platitud, @plongitute)
 				
-				IF(@calculusDeviatio < @calculusDeviatioFinal)
+				PRINT('++++++++++++++++++++')
+				PRINT(@calculusDeviatio)
+				PRINT('++++++++++++++++++++')
+				IF(@calculusDeviatio < @calculusDeviatioFinal OR @calculusDeviatioFinal = 0)
 				BEGIN
 					SET @calculusDeviatioFinal = @calculusDeviatio
 				END
@@ -79,7 +82,7 @@ BEGIN
 			SET @lastLatitud = 0
 			SET @lastLongitute = 0
 			SET @status = 'ON_ROUTE'
-			IF(@deviation >= 20)
+			IF(@deviation >= 75)
 			BEGIN
 				SET @status = 'OFF_ROUTE'
 				SELECT TOP 1
