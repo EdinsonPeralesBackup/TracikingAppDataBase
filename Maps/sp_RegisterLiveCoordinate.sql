@@ -37,6 +37,10 @@ BEGIN
 			FROM POINT
 			WHERE IdRoute = @pidTracking AND IsValid = 'D')
 
+			CREATE TABLE #desviationsTemp (
+				valores DECIMAL(10, 4)
+			)
+
 			OPEN cursor_points;
 
 			FETCH NEXT FROM cursor_points INTO @routeOriginLatitud, @routeOriginLongitude, @routeEndLatitud, @routeEndLongitude;
@@ -48,19 +52,29 @@ BEGIN
 											@routeEndLatitud, @routeEndLongitude,
 											@platitud, @plongitute)
 				
-				PRINT('++++++++++++++++++++')
-				PRINT(@calculusDeviatio)
-				PRINT('++++++++++++++++++++')
-				IF(@calculusDeviatio < @calculusDeviatioFinal OR @calculusDeviatioFinal = 0)
-				BEGIN
-					SET @calculusDeviatioFinal = @calculusDeviatio
-				END
+				INSERT INTO #desviationsTemp VALUES (@calculusDeviatio);
+
+				--PRINT('++++++++++++++++++++')
+				--PRINT(@calculusDeviatio)
+				--PRINT('++++++++++++++++++++')
+				--IF(@calculusDeviatio < @calculusDeviatioFinal OR @calculusDeviatioFinal = 0)
+				--BEGIN
+				--	SET @calculusDeviatioFinal = @calculusDeviatio
+				--END
 
 				FETCH NEXT FROM cursor_points INTO @routeOriginLatitud, @routeOriginLongitude, @routeEndLatitud, @routeEndLongitude;
 			END
 
 			CLOSE cursor_points;
 			DEALLOCATE cursor_points;
+
+			SELECT TOP 1 
+				@calculusDeviatioFinal = valores
+			FROM #desviationsTemp 
+			ORDER BY valores ASC
+
+			IF OBJECT_ID('tempdb..#desviationsTemp') IS NOT NULL
+				DROP TABLE #desviationsTemp;
 
 			INSERT INTO dbo.POINT (
 				Origin_latitud,
