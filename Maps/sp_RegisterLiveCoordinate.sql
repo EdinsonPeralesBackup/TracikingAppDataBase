@@ -13,6 +13,7 @@ CREATE PROCEDURE sp_RegisterLiveCoordinate
 	@plongitute DECIMAL(10, 4),
 	@ptimestamp DATETIME,
 	@status VARCHAR(250) OUTPUT,
+	@cancelable BIT OUTPUT,
 	@deviation DECIMAL(10, 4) OUTPUT,
 	@lastLatitud DECIMAL(10, 4) OUTPUT,
 	@lastLongitute DECIMAL(10, 4) OUTPUT
@@ -28,7 +29,8 @@ BEGIN
 				@routeEndLatitud DECIMAL(10, 4),
 				@routeEndLongitude DECIMAL(10, 4),
 				@calculusDeviatio DECIMAL(10, 4),
-				@calculusDeviatioFinal DECIMAL(10, 4) = 0
+				@calculusDeviatioFinal DECIMAL(10, 4) = 0,
+				@calculusDeviationFinalPoint DECIMAL(10, 4)
 
 			DECLARE cursor_points CURSOR FOR
 			(SELECT 
@@ -79,7 +81,7 @@ BEGIN
 			SET @lastLatitud = 0
 			SET @lastLongitute = 0
 			SET @status = 'ON_ROUTE'
-			IF(@deviation >= 20)
+			IF(@deviation >= 75)
 			BEGIN
 				SET @status = 'OFF_ROUTE'
 				SELECT TOP 1
@@ -87,6 +89,35 @@ BEGIN
 					@lastLongitute = Origin_longitude
 				FROM POINT WHERE IdRoute = @pidTracking
 				ORDER BY Id DESC
+			END
+
+			IF(@status = 'ON_ROUTE')
+			BEGIN				
+				DECLARE @endLatitud DECIMAL(10, 4), @endLongitude DECIMAL(10, 4)
+
+				SELECT 
+					@endLatitud = End_latitud, 
+					@endLongitude = End_longitude
+				FROM POINT
+				WHERE IdRoute = @pidTracking AND IsValid = 'D' 
+				ORDER BY ID DESC;
+
+				DECLARE @p1 geography = geography::Point(@platitud, @plongitute, 4326);
+				DECLARE @p2 geography = geography::Point(@endLatitud, @endLongitude, 4326);
+
+
+				--SET @calculusDeviationFinalPoint = SQRT(POWER((@platitud - @endLatitud), 2) + POWER((@plongitute - @endLongitude), 2))
+				SET @calculusDeviationFinalPoint = @p1.STDistance(@p2) 
+
+				IF(@calculusDeviationFinalPoint <= 80)
+				BEGIN
+					SET @cancelable = 0
+				END
+				ELSE
+				BEGIN
+					SET @cancelable = 1
+				END
+
 			END
 
 		COMMIT TRANSACTION;
