@@ -30,6 +30,7 @@ BEGIN
 	DECLARE @numberTracking VARCHAR(10)
 	BEGIN TRY
 		BEGIN TRANSACTION
+
 			UPDATE [ROUTE] SET State = 'C' WHERE IdUser = @pidUser AND State <> 'F'
 
 			INSERT INTO [ROUTE]
