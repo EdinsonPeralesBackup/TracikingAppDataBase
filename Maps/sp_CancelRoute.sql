@@ -16,7 +16,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION
 			
-			UPDATE [ROUTE] SET [STATE] = 'C' WHERE IdUser = @puserId AND [STATE] <> 'S'
+			UPDATE [ROUTE] SET [STATE] = 'C' WHERE IdUser = @puserId AND [STATE] = 'S'
 
 			SET @msj = 'OK'
 
