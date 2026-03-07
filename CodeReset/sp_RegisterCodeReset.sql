@@ -9,7 +9,7 @@ GO
 CREATE PROCEDURE sp_RegisterCodeReset
 (
 	@pcode VARCHAR(6),
-	@pphone VARCHAR(6),
+	@pphone VARCHAR(12),
 	@message VARCHAR(500) OUTPUT
 )
 AS
