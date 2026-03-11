@@ -1,0 +1,29 @@
+USE TrackingBD;
+GO
+IF EXISTS (SELECT * FROM sys.procedures WHERE name = 'sp_CancelRoute') 
+	BEGIN
+		DROP PROCEDURE sp_CancelRoute;
+	END
+GO
+
+CREATE PROCEDURE sp_CancelRoute
+(
+	@puserId INT,
+	@msj CHAR(2) OUTPUT
+)
+AS
+BEGIN
+	BEGIN TRY
+		BEGIN TRANSACTION
+			
+			UPDATE [ROUTE] SET [STATE] = 'C' WHERE IdUser = @puserId AND [STATE] <> 'S'
+
+			SET @msj = 'OK'
+
+		COMMIT TRANSACTION;
+	END TRY
+	BEGIN CATCH
+		SET @msj = 'EX';
+		ROLLBACK TRANSACTION;
+	END CATCH
+END
