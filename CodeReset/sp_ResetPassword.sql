@@ -10,19 +10,27 @@ CREATE PROCEDURE sp_ResetPassword
 (
 	@presetCode VARCHAR(6),
 	@pnewPassword VARCHAR(MAX),
-	@pidUser INT,
+	@pphone VARCHAR(10),
 	@message VARCHAR(500) OUTPUT
 )
 AS
 BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION
-			DECLARE @idCode INT
-			SELECT @idCode = Id FROM CODE_RESET WHERE Code = @presetCode AND IdUser = @pidUser AND [State] = 1 
+			DECLARE @idCode INT, @idUser INT
+
+			SELECT 
+				@idCode = CODE.Id,
+				@idUser = USERS.Id
+			FROM CODE_RESET CODE
+			INNER JOIN [USER] USERS ON USERS.Id = CODE.IdUser
+			WHERE Code = @presetCode AND USERS.Phone = @pphone AND CODE.[State] = 1 
+
 			IF(@idCode <> 0)
 			BEGIN
 				UPDATE CODE_RESET SET [State] = 0 WHERE Id = @idCode
-				UPDATE [USER] SET [Password] = @pnewPassword WHERE Id = @pidUser
+				UPDATE [USER] SET [Password] = @pnewPassword WHERE Id = @idUser
+				UPDATE CODE_RESET SET [State] = 0 WHERE IdUser = @idUser
 				SET @message = 'Password updated successfully.';
 			END
 			ELSE
