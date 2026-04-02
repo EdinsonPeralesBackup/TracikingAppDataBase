@@ -21,8 +21,8 @@ BEGIN
 
 			SELECT @IdUsuario = Id FROM [USER] WHERE Phone = @pphone
 
-			INSERT INTO CODE_RESET(Code, State, IdUser) 
-				VALUES(@pcode, 1, @IdUsuario)
+			INSERT INTO CODE_RESET(Code, State, IdUser, Phone) 
+				VALUES(@pcode, 1, @IdUsuario, @pphone)
 			SET @message = 'Code registed successfully.';
 		COMMIT TRANSACTION;
 	END TRY
