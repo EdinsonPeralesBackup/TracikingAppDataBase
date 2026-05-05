@@ -8,7 +8,7 @@ GO
 
 CREATE PROCEDURE sp_RegisterAlert
 (
-	@pidUser INT,
+	@pidRoute INT,
 	@ptrackingId VARCHAR(10),
 	@platitude DECIMAL(10, 4),
 	@plongitude DECIMAL(10, 4),
@@ -20,19 +20,32 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION
 
-			DECLARE @idAlert INT, @idRoute INT;
+			DECLARE @countAlert INT = 0;
 
-			SELECT @idRoute = Id FROM [ROUTE] WHERE Tracking_id = @ptrackingId
+			SELECT 
+				@countAlert = COUNT(Id) 
+			FROM ALERT WHERE IdRoute = @pidRoute
 
-			INSERT INTO ALERT(Latitude, Longitude, [Timestamp], IdRoute, CountVisit) 
-				VALUES(@platitude, @plongitude, @ptimestamp, @idRoute, 0)
+			IF (COALESCE(@countAlert, 0) = 0)
+			BEGIN
+				DECLARE @idAlert INT, @idUser INT;
 
-			SET @idAlert = SCOPE_IDENTITY();
+				SELECT @idUser = IdUser FROM [ROUTE] WHERE Id = @pidRoute
 
-			INSERT INTO ALERTXTRUSTED_CONTACTS(IdAlert, IdTrusted_Contacts)
-				SELECT @idAlert, Id FROM TRUSTED_CONTACT WHERE IdUser = @pidUser AND State = 1
+				INSERT INTO ALERT(Latitude, Longitude, [Timestamp], IdRoute, CountVisit) 
+					VALUES(@platitude, @plongitude, @ptimestamp, @pidRoute, 0)
 
-			SET @msj = 'OK'
+				SET @idAlert = SCOPE_IDENTITY();
+
+				INSERT INTO ALERTXTRUSTED_CONTACTS(IdAlert, IdTrusted_Contacts)
+					SELECT @idAlert, Id FROM TRUSTED_CONTACT WHERE IdUser = @idUser AND State = 1
+
+				SET @msj = 'OK'
+				END
+			ELSE
+			BEGIN
+				SET @msj = 'E1'
+			END
 
 		COMMIT TRANSACTION;
 	END TRY

@@ -8,10 +8,17 @@ GO
 
 CREATE PROCEDURE sp_GetDangerRoute
 (
-	@pTrackingRoute VARCHAR(10)
+	@pTrackingRoute VARCHAR(10),
+	@pPhoneUser VARCHAR(10)
 )
 AS
 BEGIN
+
+	UPDATE ALE SET CountVisit = CountVisit  + 1
+	FROM ALERT ALE
+	INNER JOIN ALERTXTRUSTED_CONTACTS ALEXTRU ON ALEXTRU.IdAlert = ALE.Id
+	INNER JOIN TRUSTED_CONTACT TRU ON TRU.Id = ALEXTRU.IdTrusted_Contacts
+	WHERE TRU.Phone = @pPhoneUser
 
 	SELECT 
 		POIN.Origin_latitud AS [LATITUD],
